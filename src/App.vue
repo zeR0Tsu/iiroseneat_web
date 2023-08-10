@@ -1,6 +1,7 @@
 <template>
     <div class="app dark" data-theme="dark">
-        <UserMsg class="card" :msg="msgList" />
+        <UserMsg v-for="(item, key ) in userList" class="card msg" :msg="msgList" :userId="item" />
+        <textarea placeholder="输入消息"></textarea>
     </div>
 </template>
 <style>
@@ -14,6 +15,7 @@
 
 .app {
     position: relative;
+    overflow: hidden;
 
     width: 100vw;
     height: 100vh;
@@ -21,26 +23,57 @@
 
     display: flex;
     flex-direction: row;
-    align-items: center;
 
-    .test {
+    align-items: center;
+    justify-content: center;
+
+    textarea {
         position: absolute;
-        width: 50px;
-        height: 50px;
+        flex-grow: 1;
+        background: #313338;
+        font-size: 16px;
+        padding: 5px 5px 5px 20px;
+        border-radius: 10px;
+        border: #2a2a31 solid 1px;
+        border-right: transparent solid 40px;
+        border-top: transparent solid 10px;
+        border-bottom: transparent solid 10px;
+        box-shadow: 0 0 15px 2px #00000044;
         color: #fff;
-        z-index: 999;
-        top: 0;
+        flex-grow: 1;
+        resize: none;
+        overflow-y: auto;
+        height: auto;
+        height: 4%;
+        width: 40%;
+        bottom: 4%;
+        opacity: .8;
+
+        &:focus {
+            outline: 2px solid #3b82f6;
+        }
+
+        &::placeholder {
+            color: #8e8ea0;
+        }
     }
 
     .card {
-        position: absolute;
-        height: 95%;
-        width: 90%;
-        margin: 0 0 0 2.5%;
+
         border-radius: 6px;
         background: $bg_card;
         color: #fff;
     }
+
+    .msg {
+        margin: 8px;
+        position: relative;
+        flex-grow: 1;
+        flex-shrink: 1;
+        height: 95%;
+        width: 50%;
+    }
+    
 
 }
 </style>
@@ -59,7 +92,7 @@ export default {
                 status: 'disconnect'
             },
             msgList: [],
-            userList: [],
+            userList: ["60f66a44c2008", "5f1131ff6d1a2"],
         }
     },
     mounted () {
@@ -85,10 +118,9 @@ export default {
             this.ws.wws.onmessage = (event) => {
                 const message = JSON.parse(event.data);
                 console.log(message);
-                if (this.userList.indexOf(message.userId) < 0) {
-                    this.userList.push(message.userId)
-                }
-                if (message.msg.hasOwnProperty('publicMessage')) {
+                if (message.msg.hasOwnProperty('userList')) {
+
+                } else if (message.msg.hasOwnProperty('publicMessage')) {
                     let msg = {
                         user: message.userId,
                         type: 'public',

@@ -2,20 +2,22 @@
     <div class="msg" ref="msgboxs">
 
         <div class="conten" v-for="(item, key) in message">
-            <div class="msgtext" v-if="item.type == 'public'">
-                <div class="icon" :style="{ background: '#' + item.msg.color }"></div>
-                <div class="text">
-                    <div class="name">{{ item.msg.username }}</div>
-                    <div class="msg">{{ item.msg.message }}</div>
+            <div class="screen" v-if="user == item.user">
+                <div class="msgtext" v-if="item.type == 'public'">
+                    <div class="icon" :style="{ background: '#' + item.msg.color }"></div>
+                    <div class="text">
+                        <div class="name">{{ item.msg.username }}</div>
+                        <div class="msg">{{ item.msg.message }}</div>
+                    </div>
                 </div>
-            </div>
-            <div class="room" v-if="item.type == 'leave' || item.type == 'switch' || item.type == 'join'">
-                <div class="after" :style="{ background: color[item.type] }"></div>
-                <div class="text"><span>{{ item.msg.username }}</span>
-                <div v-if="item.type=='join'">加入了</div>
-                <div v-if="item.type=='leave'">离开了</div>
-                <div v-if="item.type=='switch'">切换到</div>
+                <div class="room" v-if="item.type == 'leave' || item.type == 'switch' || item.type == 'join'">
+                    <div class="after" :style="{ background: color[item.type] }"></div>
+                    <div class="text"><span>{{ item.msg.username }}</span>
+                        <div v-if="item.type == 'join'">加入了</div>
+                        <div v-if="item.type == 'leave'">离开了</div>
+                        <div v-if="item.type == 'switch'">切换到{{}}</div>
 
+                    </div>
                 </div>
             </div>
         </div>
@@ -26,8 +28,39 @@
 <style lang="scss">
 @import '../theme/dark.sass';
 
+*::-webkit-scrollbar {
+    width: 6px;
+    border: 0px;
+    margin: 0 5px 0 0;
+
+    background: transparent;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    margin: 0 5px 0 0;
+
+    border-radius: 2.5px;
+    background: #777;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    margin: 0 5px 0 0;
+
+    background: rgb(100, 100, 100);
+}
+
+*::-webkit-scrollbar-thumb:active {
+    margin: 0 5px 0 0;
+}
+
+
 .msg {
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
 
 
     .conten {
@@ -35,11 +68,12 @@
         display: flex;
         flex-direction: column;
 
+        .screen {}
+
         .msgtext {
             width: 100%;
             display: flex;
             flex-direction: row;
-
 
             &:hover {
                 background: $bg_card_hover;
@@ -55,6 +89,9 @@
 
             .text {
                 margin: 8px 12px 0 0;
+                white-space: normal;
+                width: calc(100% - 12px - 8px - 16px - 16px);
+
 
                 .name {
                     font-size: 14px;
@@ -62,8 +99,10 @@
                 }
 
                 .msg {
+                    width: 100%;
                     margin: 8px 0 0 8px;
                     font-weight: 100;
+                    overflow-wrap: break-word;
                 }
 
             }
@@ -91,8 +130,9 @@
                 span {
                     font-weight: 600;
                     font-size: 14px;
-                margin: 0 4px 0 0;
+                    margin: 0 4px 0 0;
                 }
+
                 font-size: 14px;
                 font-weight: 100;
             }
@@ -100,7 +140,7 @@
     }
 
     .bit {
-        height: 1px;
+        height: 8px;
         flex-shrink: 0;
     }
 }
@@ -111,6 +151,7 @@ export default {
         return {
             message: this.msg,
             bottomStatus: true,
+            user: this.userId,
             color: {
                 join: '#00a381',
                 leave: '#d9333f',
@@ -118,7 +159,7 @@ export default {
             }
         }
     },
-    props: ['msg'],
+    props: ['msg', 'userId'],
     mounted () {
         const bit = this.$refs.bit
 
