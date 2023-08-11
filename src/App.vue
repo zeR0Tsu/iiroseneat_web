@@ -1,7 +1,9 @@
 <template>
     <div class="app dark" data-theme="dark">
-        <UserMsg v-for="(item, key ) in userList" class="card msg" :msg="msgList" :userId="item" />
-        <textarea placeholder="输入消息"></textarea>
+        <!-- <div class="test"><img src="http://r.iirose.com/i/23/3/18/20/5307-YA.png" alt=""></div> -->
+        <UserMsg v-for="(item, key ) in userList" class="card msg" :msg="msgList" :userId="item"
+            :username="config.bot[item].userName" />
+        <div></div>
     </div>
 </template>
 <style>
@@ -10,7 +12,7 @@
     padding: 0;
 }
 </style>
-<style lang="scss">
+<style lang="scss" scoped>
 @import './theme/dark.sass';
 
 .app {
@@ -27,37 +29,19 @@
     align-items: center;
     justify-content: center;
 
-    textarea {
+    .test{
         position: absolute;
-        flex-grow: 1;
-        background: #313338;
-        font-size: 16px;
-        padding: 5px 5px 5px 20px;
-        border-radius: 10px;
-        border: #2a2a31 solid 1px;
-        border-right: transparent solid 40px;
-        border-top: transparent solid 10px;
-        border-bottom: transparent solid 10px;
-        box-shadow: 0 0 15px 2px #00000044;
-        color: #fff;
-        flex-grow: 1;
-        resize: none;
-        overflow-y: auto;
-        height: auto;
-        height: 4%;
-        width: 40%;
-        bottom: 4%;
-        opacity: .8;
-
-        &:focus {
-            outline: 2px solid #3b82f6;
+        z-index: 999;
+        top: 0;
+        left: 0;
+        img{
+            width: 50px;
+            height: 50px;
+     
         }
-
-        &::placeholder {
-            color: #8e8ea0;
-        }
+        width: 50px;
+        height: 50px;
     }
-
     .card {
 
         border-radius: 6px;
@@ -73,7 +57,7 @@
         height: 95%;
         width: 50%;
     }
-    
+
 
 }
 </style>
@@ -92,7 +76,8 @@ export default {
                 status: 'disconnect'
             },
             msgList: [],
-            userList: ["60f66a44c2008", "5f1131ff6d1a2"],
+            userList: [],
+            config: null,
         }
     },
     mounted () {
@@ -118,7 +103,9 @@ export default {
             this.ws.wws.onmessage = (event) => {
                 const message = JSON.parse(event.data);
                 console.log(message);
-                if (message.msg.hasOwnProperty('userList')) {
+                if (message.msg.hasOwnProperty('config')) {
+                    this.config = message.msg.config
+                    this.userList = Object.keys(this.config.bot)
 
                 } else if (message.msg.hasOwnProperty('publicMessage')) {
                     let msg = {
@@ -168,6 +155,21 @@ export default {
                 this.connectWebSocket();   // 重新连接WebSocket
             }, 3000);
         },
+        /**
+         * @param {*} userId -
+         * @param {*} msg - 
+         * @param {*} color 
+        */
+        sendMsg (userId, msg, color) {
+            const data = {
+                userId: userId,
+                msg: msg,
+                color: color
+            }
+            this.ws.wws.send(JSON.stringify(data))
+        }
     },
+    computed: {
+    }
 }
 </script>
