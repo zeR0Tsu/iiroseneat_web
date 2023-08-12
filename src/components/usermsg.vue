@@ -2,27 +2,21 @@
     <div class="usermsg">
         <div class="msg" ref="msgboxs">
 
-            <div class="conten" v-for="(item, key) in message">
-                <div class="screen" v-if="user == item.user">
-                    <div class="reply">
-                        <div class="replymsg" v-for="(item1, key1) in item.msg.replyMessage">
-                            <div class="name">{{ item1.username + "：" }}</div>
-                            <Msg class="text" :msg="item1.message"></Msg>
-                        </div>
+        <div class="conten" v-for="(item, key) in message">
+            <div class="screen" v-if="user == item.user">
+                <div class="msgtext" v-if="item.type == 'public'">
+                    <div class="icon" :style="{ background: '#' + item.msg.color }"></div>
+                    <div class="text">
+                        <div class="name">{{ item.msg.username }}</div>
+                        <div class="msg">{{ item.msg.message }}</div>
                     </div>
-                    <div class="msgtext" v-if="item.type == 'public'">
-                        <div class="icon" :style="{ background: '#' + item.msg.color }"></div>
-                        <div class="text">
-                            <div class="name">{{ item.msg.username }}</div>
-                            <Msg class="msg" :msg="item.msg.message"></Msg>
-                        </div>
-                    </div>
-                    <div class="room" v-if="item.type == 'leave' || item.type == 'switch' || item.type == 'join'">
-                        <div class="after" :style="{ background: color[item.type] }"></div>
-                        <div class="text"><span>{{ item.msg.username }}</span>
-                            <div v-if="item.type == 'join'">加入了</div>
-                            <div v-if="item.type == 'leave'">离开了</div>
-                            <div v-if="item.type == 'switch'">切换到 <span>{{ '房间：' + item.msg.targetRoom }}</span></div>
+                </div>
+                <div class="room" v-if="item.type == 'leave' || item.type == 'switch' || item.type == 'join'">
+                    <div class="after" :style="{ background: color[item.type] }"></div>
+                    <div class="text"><span>{{ item.msg.username }}</span>
+                        <div v-if="item.type == 'join'">加入了</div>
+                        <div v-if="item.type == 'leave'">离开了</div>
+                        <div v-if="item.type == 'switch'">切换到{{}}</div>
 
                         </div>
                     </div>
