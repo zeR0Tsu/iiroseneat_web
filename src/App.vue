@@ -2,7 +2,7 @@
     <div class="app dark" data-theme="dark">
         <!-- <div class="test"><img src="http://r.iirose.com/i/23/3/18/20/5307-YA.png" alt=""></div> -->
         <UserMsg v-for="(item, key ) in userList" class="card msg" :msg="msgList" :userId="item"
-            :username="config.bot[item].userName" />
+            :username="config.bot[item].userName" :usercolor="config.bot[item].color" />
         <div></div>
     </div>
 </template>
@@ -29,19 +29,22 @@
     align-items: center;
     justify-content: center;
 
-    .test{
+    .test {
         position: absolute;
         z-index: 999;
         top: 0;
         left: 0;
-        img{
+
+        img {
             width: 50px;
             height: 50px;
-     
+
         }
+
         width: 50px;
         height: 50px;
     }
+
     .card {
 
         border-radius: 6px;

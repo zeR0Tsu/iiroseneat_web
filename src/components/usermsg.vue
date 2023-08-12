@@ -1,6 +1,7 @@
 <template>
     <div class="usermsg">
-        <div class="msg" ref="msgboxs">
+        <div class="msg" ref="msgboxs" @wheel="wheelScroll" @mousedown="mouseclick = true" @mouseup="mouseclick = false"
+            @scroll="mouseScroll">
 
             <div class="conten" v-for="(item, key) in message">
                 <div class="screen" v-if="user == item.user">
@@ -13,7 +14,7 @@
                     <div class="msgtext" v-if="item.type == 'public'">
                         <div class="icon" :style="{ background: '#' + item.msg.color }"></div>
                         <div class="text">
-                            <div class="name">{{ item.msg.username }}</div>
+                            <div class="name" @click="userAt(item.msg.username)">{{ item.msg.username }}</div>
                             <Msg class="msg" :msg="item.msg.message"></Msg>
                         </div>
                     </div>
@@ -33,7 +34,9 @@
         <div class="textarea">
             <textarea @keydown.enter="sendKey($event)" ref="textarea" :placeholder="`以 ${username} 的身份说点什么...`"
                 v-model="textarea"></textarea>
+            <i class="bi bi-palette-fill" :style="{ color: colorPicker.hex }" @click="isPicker=!isPicker"></i>
             <i class="bi bi-send" @click="send()"></i>
+            <ChromePicker class="Picker" v-model="colorPicker" :style="{marginRight:isPicker?'0':'-60%'}"></ChromePicker>
         </div>
     </div>
 </template>
@@ -140,11 +143,18 @@
                         margin: 8px 12px 0px 0;
                         white-space: normal;
                         width: calc(100% - 12px - 8px - 16px - 16px);
-
+                        flex-direction: column;
 
                         .name {
+                            display: inline-block;
+                            width: auto;
                             font-size: 14px;
                             font-weight: 600;
+                            cursor: pointer;
+
+                            &:hover {
+                                color: #ffffffaa;
+                            }
                         }
 
                         .msg {
@@ -207,7 +217,7 @@
             margin: 10px 12px 20px;
             flex-grow: 1;
             height: 42px;
-            min-height: 42px;
+            min-height: 56px;
             max-height: 50vh;
             background: #383a40;
             border-radius: 4px;
@@ -238,7 +248,7 @@
             right: 24px;
             bottom: 28px;
             color: #6a6c85;
-            font-size: 1.2em;
+            font-size: 18px;
             transform: scaleX(-1);
 
             &:hover {
@@ -246,32 +256,62 @@
             }
 
         }
+
+        .bi-palette-fill {
+            position: absolute;
+            right: 26px;
+            bottom: 60px;
+            font-size: 18px;
+            transform: scaleX(-1);
+        }
+
+        .Picker {
+            width: 50%;
+            transition: 1s all cubic-bezier(0.16, 1, 0.3, 1);
+            
+            position: absolute;
+            bottom: 100px;
+            right: 12px;
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 4px;
+            opacity: 1;
+        }
     }
 }
 </style>
 <script>
 import MsgParsing from './MsgParsing.vue';
+import { Chrome } from '@ckpack/vue-color'
 export default {
     data () {
         return {
             textarea: '',
             message: this.msg,
             bottomStatus: true,
+            userBottomStatus: true,
+            mouseclick: false,
             user: this.userId,
+            colorPicker: {
+                hex: this.colorHex(this.usercolor,1)
+            },
             color: {
                 join: '#00a381',
                 leave: '#d9333f',
                 switch: '#1e88e5',
-            }
+            },
+            isPicker:false,
         }
     },
-    props: ['msg', 'userId', 'username'],
+    props: ['msg', 'userId', 'username', 'usercolor'],
     components: {
-        'Msg': MsgParsing
+        'Msg': MsgParsing,
+        'ChromePicker': Chrome
     },
     mounted () {
-        this.scrollToBottom();
 
+        this.scrollToBottom();
+        const container = this.$refs.msgboxs;
         const bit = this.$refs.bit
 
         let options = {
@@ -285,17 +325,41 @@ export default {
 
     },
     methods: {
+        colorHex (color, type) {
+            if (color.indexOf('#') < 0) {
+                return type ? `#${color}` : color
+            } else {
+                return type ? color : color.slice(1)
+
+            }
+        },
+        userAt (username) {
+            this.textarea += ` [*${username}*] `
+        },
+        mouseScroll (e) {
+            console.log(this.mouseclick);
+            if (this.mouseclick && this.bottomStatus) {
+                this.userBottomStatus = true
+            } else if (this.mouseclick && !this.bottomStatus) {
+                this.userBottomStatus = false
+            }
+        },
+        wheelScroll (e) {
+            console.log(this.color.user);
+
+            if (e.deltaY < 0) {
+                this.userBottomStatus = false
+            }
+        },
         scrollToBottom () {
             const container = this.$refs.msgboxs;
-            if (this.bottomStatus) {
+            if (this.userBottomStatus && !this.mouseclick) {
                 container.scroll({
                     top: container.scrollHeight,
                     behavior: "smooth",
                 })
 
             }
-
-
         },
         sendKey (event) {
             if (event.key === 'Enter' && event.ctrlKey) {
@@ -304,10 +368,10 @@ export default {
         },
         send () {
             if (this.textarea === "") { return } else {
-                this.$parent.sendMsg(this.user, this.textarea, '66ccff')
+                this.$parent.sendMsg(this.user, this.textarea, this.colorHex(this.colorPicker.hex,0))
                 this.textarea = ''
                 setTimeout(() => {
-                    this.$refs.textarea.style.height = '42px'
+                    this.textareaAuto()
                 }, 1)
             }
 
@@ -318,21 +382,32 @@ export default {
         }
     },
     watch: {
-        message: {
-            handler () {
-                // 监听数组变化，在数组变化后滚动到底部
-                this.$nextTick(() => {
-                    this.scrollToBottom();
-                });
-            },
-            deep: true
-        },
+        // message: {
+        //     handler () {
+        //         // 监听数组变化，在数组变化后滚动到底部
+        //         this.$nextTick(() => {
+        //             this.scrollToBottom();
+        //         });
+        //     },
+        //     deep: true
+        // },
         textarea: {
             handler (newVal, oldVal) {
                 this.textareaAuto()
             },
 
+        },
+        bottomStatus: {
+            handler (newVal, oldVal) {
+                if (newVal == false) {
+                    this.scrollToBottom()
+                } else {
+                    this.userBottomStatus = true
+                }
+            }
         }
+    },
+    computed: {
     }
 
 }

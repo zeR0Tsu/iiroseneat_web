@@ -39,6 +39,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ckpack/vue-color@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@ckpack/vue-color@npm:1.5.0"
+  dependencies:
+    "@ctrl/tinycolor": ^3.6.0
+    material-colors: ^1.2.6
+  peerDependencies:
+    vue: ^3.2.0
+  checksum: 8411b9fe0080378c347ea0421757a8652b52e7514596b227d18e07ff1b55eca061b008b8740fddbe9e6848f84fe7196e6abfe4c1a4d2929eb2b3224bcd62e078
+  languageName: node
+  linkType: hard
+
+"@ctrl/tinycolor@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "@ctrl/tinycolor@npm:3.6.0"
+  checksum: 4d1e481b4d7f9bb23d21b5436726034d37c2a1bc751b5169ef29ead0237e96443dbccbcfa887e20c3a65ba1b5e270063bb21b4034eac97561b980cbbd5e92a16
+  languageName: node
+  linkType: hard
+
 "@esbuild/android-arm64@npm:0.18.20":
   version: 0.18.20
   resolution: "@esbuild/android-arm64@npm:0.18.20"
@@ -1022,6 +1041,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "iiroseneat@workspace:."
   dependencies:
+    "@ckpack/vue-color": ^1.5.0
     "@vitejs/plugin-vue": ^4.2.3
     bootstrap-icons: ^1.10.3
     sass: ^1.64.2
@@ -1204,6 +1224,13 @@ __metadata:
     socks-proxy-agent: ^7.0.0
     ssri: ^10.0.0
   checksum: 7268bf274a0f6dcf0343829489a4506603ff34bd0649c12058753900b0eb29191dce5dba12680719a5d0a983d3e57810f594a12f3c18494e93a1fbc6348a4540
+  languageName: node
+  linkType: hard
+
+"material-colors@npm:^1.2.6":
+  version: 1.2.6
+  resolution: "material-colors@npm:1.2.6"
+  checksum: 72d005ccccb82bab68eef3cd757e802668634fc86976dedb9fc564ce994f2d3258273766b7efecb7404a0031969e2d72201a1b74169763f0a53c0dd8d649209f
   languageName: node
   linkType: hard
 

@@ -28,6 +28,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {\
           "packageLocation": "./",\
           "packageDependencies": [\
+            ["@ckpack/vue-color", "virtual:db68eada5917976122160a002b5fd8169babb537d930c63baaee81a699eba6e079ccfa890856e4b38d84337509d7bde3c0e5d930f1343d53f9fb932444737e88#npm:1.5.0"],\
             ["@vitejs/plugin-vue", "virtual:db68eada5917976122160a002b5fd8169babb537d930c63baaee81a699eba6e079ccfa890856e4b38d84337509d7bde3c0e5d930f1343d53f9fb932444737e88#npm:4.2.3"],\
             ["bootstrap-icons", "npm:1.10.5"],\
             ["sass", "npm:1.64.2"],\
@@ -77,6 +78,39 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/helper-string-parser", "npm:7.22.5"],\
             ["@babel/helper-validator-identifier", "npm:7.22.5"],\
             ["to-fast-properties", "npm:2.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@ckpack/vue-color", [\
+        ["npm:1.5.0", {\
+          "packageLocation": "./.yarn/cache/@ckpack-vue-color-npm-1.5.0-ad3b1b26c1-8411b9fe00.zip/node_modules/@ckpack/vue-color/",\
+          "packageDependencies": [\
+            ["@ckpack/vue-color", "npm:1.5.0"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:db68eada5917976122160a002b5fd8169babb537d930c63baaee81a699eba6e079ccfa890856e4b38d84337509d7bde3c0e5d930f1343d53f9fb932444737e88#npm:1.5.0", {\
+          "packageLocation": "./.yarn/__virtual__/@ckpack-vue-color-virtual-e5ad7a9b4d/0/cache/@ckpack-vue-color-npm-1.5.0-ad3b1b26c1-8411b9fe00.zip/node_modules/@ckpack/vue-color/",\
+          "packageDependencies": [\
+            ["@ckpack/vue-color", "virtual:db68eada5917976122160a002b5fd8169babb537d930c63baaee81a699eba6e079ccfa890856e4b38d84337509d7bde3c0e5d930f1343d53f9fb932444737e88#npm:1.5.0"],\
+            ["@ctrl/tinycolor", "npm:3.6.0"],\
+            ["@types/vue", null],\
+            ["material-colors", "npm:1.2.6"],\
+            ["vue", "npm:3.3.4"]\
+          ],\
+          "packagePeers": [\
+            "@types/vue",\
+            "vue"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@ctrl/tinycolor", [\
+        ["npm:3.6.0", {\
+          "packageLocation": "./.yarn/cache/@ctrl-tinycolor-npm-3.6.0-fc89a669c3-4d1e481b4d.zip/node_modules/@ctrl/tinycolor/",\
+          "packageDependencies": [\
+            ["@ctrl/tinycolor", "npm:3.6.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -1201,6 +1235,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["iiroseneat", "workspace:."],\
+            ["@ckpack/vue-color", "virtual:db68eada5917976122160a002b5fd8169babb537d930c63baaee81a699eba6e079ccfa890856e4b38d84337509d7bde3c0e5d930f1343d53f9fb932444737e88#npm:1.5.0"],\
             ["@vitejs/plugin-vue", "virtual:db68eada5917976122160a002b5fd8169babb537d930c63baaee81a699eba6e079ccfa890856e4b38d84337509d7bde3c0e5d930f1343d53f9fb932444737e88#npm:4.2.3"],\
             ["bootstrap-icons", "npm:1.10.5"],\
             ["sass", "npm:1.64.2"],\
@@ -1409,6 +1444,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["promise-retry", "npm:2.0.1"],\
             ["socks-proxy-agent", "npm:7.0.0"],\
             ["ssri", "npm:10.0.4"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["material-colors", [\
+        ["npm:1.2.6", {\
+          "packageLocation": "./.yarn/cache/material-colors-npm-1.2.6-38f7e3d1c1-72d005cccc.zip/node_modules/material-colors/",\
+          "packageDependencies": [\
+            ["material-colors", "npm:1.2.6"]\
           ],\
           "linkType": "HARD"\
         }]\
