@@ -15,7 +15,7 @@
     .img1 {
         max-width: 80%;
         height: auto;
-        margin: 8px;
+        margin: 0px 8px;
         border: 8px;
         border-radius: 4px;
 
