@@ -1,5 +1,8 @@
 <template>
     <div class="usermsg">
+        <div class="room"> <i class="bi bi-house-door-fill"></i>
+            <div class="title">{{ uppercase(roomid) }}</div>
+        </div>
         <div class="msg" ref="msgboxs" @wheel="wheelScroll" @mousedown="mouseclick = true" @mouseup="mouseclick = false"
             @scroll="mouseScroll">
 
@@ -34,9 +37,10 @@
         <div class="textarea">
             <textarea @keydown.enter="sendKey($event)" ref="textarea" :placeholder="`以 ${username} 的身份说点什么...`"
                 v-model="textarea"></textarea>
-            <i class="bi bi-palette-fill" :style="{ color: colorPicker.hex }" @click="isPicker=!isPicker"></i>
+            <i class="bi bi-palette-fill" :style="{ color: colorPicker.hex }" @click="isPicker = !isPicker"></i>
             <i class="bi bi-send" @click="send()"></i>
-            <ChromePicker class="Picker" v-model="colorPicker" :style="{marginRight:isPicker?'0':'-60%'}"></ChromePicker>
+            <ChromePicker class="Picker" v-model="colorPicker" :style="{ marginRight: isPicker ? '0' : '-60%' }">
+            </ChromePicker>
         </div>
     </div>
 </template>
@@ -76,6 +80,30 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+
+    >.room {
+        display: inline-flex;
+        flex-direction: row;
+        margin: 8px 12px 8px;
+        align-items: end;
+        font-size: 20px;
+        color: #ffffff55;
+        white-space: nowrap;
+        border-bottom: #ffffff55 2px solid;
+
+        svg {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: -20px 0 0 0;
+        }
+
+        .title {
+
+            font-size: 16px;
+            margin: 0 0 2px 10px;
+        }
+    }
 
     .msg {
         overflow-x: hidden;
@@ -268,7 +296,7 @@
         .Picker {
             width: 50%;
             transition: 1s all cubic-bezier(0.16, 1, 0.3, 1);
-            
+
             position: absolute;
             bottom: 100px;
             right: 12px;
@@ -293,17 +321,17 @@ export default {
             mouseclick: false,
             user: this.userId,
             colorPicker: {
-                hex: this.colorHex(this.usercolor,1)
+                hex: this.colorHex(this.usercolor, 1)
             },
             color: {
                 join: '#00a381',
                 leave: '#d9333f',
                 switch: '#1e88e5',
             },
-            isPicker:false,
+            isPicker: false,
         }
     },
-    props: ['msg', 'userId', 'username', 'usercolor'],
+    props: ['msg', 'userId', 'username', 'usercolor', 'roomid'],
     components: {
         'Msg': MsgParsing,
         'ChromePicker': Chrome
@@ -325,6 +353,10 @@ export default {
 
     },
     methods: {
+        uppercase (value) {
+            return value.toUpperCase();
+        },
+
         colorHex (color, type) {
             if (color.indexOf('#') < 0) {
                 return type ? `#${color}` : color
@@ -368,7 +400,7 @@ export default {
         },
         send () {
             if (this.textarea === "") { return } else {
-                this.$parent.sendMsg(this.user, this.textarea, this.colorHex(this.colorPicker.hex,0))
+                this.$parent.sendMsg(this.user, this.textarea, this.colorHex(this.colorPicker.hex, 0))
                 this.textarea = ''
                 setTimeout(() => {
                     this.textareaAuto()

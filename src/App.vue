@@ -2,7 +2,8 @@
     <div class="app dark" data-theme="dark">
         <!-- <div class="test"><img src="http://r.iirose.com/i/23/3/18/20/5307-YA.png" alt=""></div> -->
         <UserMsg v-for="(item, key ) in userList" class="card msg" :msg="msgList" :userId="item"
-            :username="config.bot[item].userName" :usercolor="config.bot[item].color" />
+            :username="config.bot[item].userName" :usercolor="config.bot[item].color"
+            :roomid="config.bot[item].userRoomId" />
         <div></div>
     </div>
 </template>
@@ -17,17 +18,16 @@
 
 .app {
     position: relative;
-    overflow: hidden;
-
+    overflow-y: hidden;
+    overflow-x: auto;
     width: 100vw;
     height: 100vh;
     background: $bg_buttom;
-
     display: flex;
     flex-direction: row;
-
     align-items: center;
-    justify-content: center;
+    /* 垂直对齐方式改为顶部对齐 */
+    justify-content: flex-start;
 
     .test {
         position: absolute;
@@ -38,7 +38,6 @@
         img {
             width: 50px;
             height: 50px;
-
         }
 
         width: 50px;
@@ -46,7 +45,6 @@
     }
 
     .card {
-
         border-radius: 6px;
         background: $bg_card;
         color: #fff;
@@ -54,14 +52,12 @@
 
     .msg {
         margin: 8px;
-        position: relative;
-        flex-grow: 1;
-        flex-shrink: 1;
         height: 95%;
-        width: 50%;
+        flex-shrink: 1;
+        flex-grow: 1;
+        /* 关闭缩小 */
+        width: 30vw;
     }
-
-
 }
 </style>
 <script>
