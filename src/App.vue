@@ -90,7 +90,7 @@ export default {
     },
     methods: {
         connectWebSocket () {
-            this.ws.wws = new WebSocket('ws://10.142.35.250:3000');
+            this.ws.wws = new WebSocket('ws://127.0.0.1:3000');
 
             this.ws.wws.onopen = () => {
                 this.ws.status = 'online';
