@@ -1,10 +1,19 @@
 <template>
     <div class="app dark" data-theme="dark">
-        <!-- <div class="test"><img src="http://r.iirose.com/i/23/3/18/20/5307-YA.png" alt=""></div> -->
+
+        <div class="nav">
+            <div class="user">
+                <div class="btn" v-for="(item, key) in userList">{{ config.bot[key].userName }}</div>
+                <div class="list">
+                    123123123
+                </div>
+
+            </div>
+        </div>
+
         <UserMsg v-for="(item, key ) in userList" class="card msg" :msg="msgList" :userId="item"
-            :username="config.bot[item].userName" :usercolor="config.bot[item].color"
-            :roomid="config.bot[item].userRoomId" />
-        <div></div>
+            :username="config.bot[key].userName" :usercolor="config.bot[key].color" :roomid="config.bot[key].userRoomId" />
+
     </div>
 </template>
 <style>
@@ -44,15 +53,38 @@
         height: 50px;
     }
 
+    .nav {
+        background: #2b2d31;
+        display: flex;
+        flex-direction: row;
+        height: 95%;
+        border-radius: 0px 8px 8px 0px;
+
+        .user {
+
+            .btn {
+                color: #fff;
+                margin: 12px 10px 12px 0px;
+                padding: 4px 20px 4px 20px;
+                background: #404249;
+                border-radius: 0px 8px 8px 0px;
+                font-size: 16px;
+                font-weight: 600;
+            }
+        }
+
+        .list {}
+    }
+
     .card {
-        border-radius: 6px;
         background: $bg_card;
         color: #fff;
+        border-radius: 8px;
     }
 
     .msg {
-        margin: 8px;
         height: 95%;
+        margin: 8px;
         flex-shrink: 1;
         flex-grow: 1;
         /* 关闭缩小 */
@@ -80,6 +112,9 @@ export default {
         }
     },
     mounted () {
+        // setInterval(() => {
+        //     console.log(this.config);
+        // }, 1000)
     },
     created () {
         this.connectWebSocket();
@@ -161,9 +196,11 @@ export default {
         */
         sendMsg (userId, msg, color) {
             const data = {
-                userId: userId,
-                msg: msg,
-                color: color
+                publicMsg: {
+                    userId: userId,
+                    msg: msg,
+                    color: color
+                }
             }
             this.ws.wws.send(JSON.stringify(data))
         }
