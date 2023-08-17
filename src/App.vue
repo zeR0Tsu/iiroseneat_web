@@ -3,16 +3,18 @@
 
         <div class="nav">
             <div class="user">
-                <div class="btn" v-for="(item, key) in userList">{{ config.bot[key].userName }}</div>
+                <div class="btn" v-for="(item, key) in userList">
+                    <i class="bi bi-person-fill"></i>
+                    <span>{{ config.bot[key].username }}</span>
+                </div>
                 <div class="list">
-                    123123123
                 </div>
 
             </div>
         </div>
 
-        <UserMsg v-for="(item, key ) in userList" class="card msg" :msg="msgList" :userId="item"
-            :username="config.bot[key].userName" :usercolor="config.bot[key].color" :roomid="config.bot[key].userRoomId" />
+        <UserMsg v-for="(item, key ) in userList" class="card msg" :msg="msgList" :userId="config.bot[key].userid"
+            :username="config.bot[key].username" :usercolor="config.bot[key].color" :roomid="config.bot[key].roomid" />
 
     </div>
 </template>
@@ -58,18 +60,36 @@
         display: flex;
         flex-direction: row;
         height: 95%;
-        border-radius: 0px 8px 8px 0px;
+        border-radius: 0px 4px 4px 0px;
+        margin: 0 4px 0 0;
 
         .user {
 
             .btn {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
                 color: #fff;
                 margin: 12px 10px 12px 0px;
-                padding: 4px 20px 4px 20px;
+                padding: 4px 20px 4px 12px;
                 background: #404249;
                 border-radius: 0px 8px 8px 0px;
                 font-size: 16px;
                 font-weight: 600;
+                white-space: nowrap;
+
+                i {
+                    font-size: 20px;
+                    margin: 0 8px 0 0;
+                }
+
+                span {
+                    flex-grow: 1;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                }
             }
         }
 
@@ -79,12 +99,12 @@
     .card {
         background: $bg_card;
         color: #fff;
-        border-radius: 8px;
+        border-radius: 4px;
     }
 
     .msg {
         height: 95%;
-        margin: 8px;
+        margin: 4px;
         flex-shrink: 1;
         flex-grow: 1;
         /* 关闭缩小 */
@@ -106,15 +126,15 @@ export default {
                 wws: null,
                 status: 'disconnect'
             },
-            msgList: [],
+            msgList: {},
             userList: [],
-            config: null,
+            config: { bot: {} },
         }
     },
     mounted () {
-        // setInterval(() => {
-        //     console.log(this.config);
-        // }, 1000)
+        setInterval(() => {
+            // console.log(this.userList);
+        }, 1000)
     },
     created () {
         this.connectWebSocket();
@@ -138,23 +158,24 @@ export default {
                 const message = JSON.parse(event.data);
                 console.log(message);
                 if (message.msg.hasOwnProperty('config')) {
-                    this.config = message.msg.config
-                    this.userList = Object.keys(this.config.bot)
+                    message.msg.config.bot.forEach(element => {
+                        this.config.bot[element.userid] = element;
+                        this.msgList[element.userid] = {}
+                    });
+
+                    // this.config = message.msg.config
+                    // console.log(1);
+                    // this.config.bot.forEach(element => {
+                    //     this.msgList[element.userid]={}
+                    // });
 
                 } else if (message.msg.hasOwnProperty('publicMessage')) {
-                    let msg = {
-                        user: message.userId,
-                        type: 'public',
-                        msg: message.msg.publicMessage,
-                    }
-                    this.msgList.push(msg)
+                    this.msgList[message.userId]['public']=[]
+                    this.msgList[message.userId]['public'].push(message.msg.publicMessage)
                 } else if (message.msg.hasOwnProperty('privateMessage')) {
-                    let msg = {
-                        user: message.userId,
-                        type: 'private',
-                        msg: message.msg.privateMessage,
-                    }
-                    this.msgList.push(msg)
+                    this.msgList[message.userId][message.msg.privateMessage.username]=[]
+                    this.msgList[message.userId][message.msg.privateMessage.username].push(message.msg.publicMessage)
+
                 } else if (message.msg.hasOwnProperty('joinRoom')) {
                     let msg = {
                         user: message.userId,
