@@ -1,20 +1,20 @@
 <template>
     <div class="usermsg">
         <div class="room"> <i class="bi bi-house-door-fill"></i>
-            <div class="title">{{ uppercase(roomid) }}</div>
+            <div class="title">{{ target == 'public' ? uppercase(config.roomid) : target }}</div>
         </div>
         <div class="msg" ref="msgboxs" @wheel="wheelScroll" @mousedown="mouseclick = true" @mouseup="mouseclick = false"
             @scroll="mouseScroll">
 
             <div class="conten" v-for="(item, key) in message">
-                <div class="screen" v-if="user == item.user">
-                    <div class="reply">
+                <div class="screen">
+                    <div class="reply" v-if="item.msg.replyMessage">
                         <div class="replymsg" v-for="(item1, key1) in item.msg.replyMessage">
                             <div class="name">{{ item1.username + "：" }}</div>
                             <Msg class="text" :msg="item1.message"></Msg>
                         </div>
                     </div>
-                    <div class="msgtext" v-if="item.type == 'public'">
+                    <div class="msgtext">
                         <div class="icon" :style="{ background: '#' + item.msg.color }"></div>
                         <div class="text">
                             <div class="name" @click="userAt(item.msg.username)">{{ item.msg.username }}</div>
@@ -35,7 +35,7 @@
             <div class="bit" ref="bit"></div>
         </div>
         <div class="textarea">
-            <textarea @keydown.enter="sendKey($event)" ref="textarea" :placeholder="`以 ${username} 的身份说点什么...`"
+            <textarea @keydown.enter="sendKey($event)" ref="textarea" :placeholder="`以 ${config.username} 的身份说点什么...`"
                 v-model="textarea"></textarea>
             <i class="bi bi-palette-fill" :style="{ color: colorPicker.hex }" @click="isPicker = !isPicker"></i>
             <i class="bi bi-send" @click="send()"></i>
@@ -319,9 +319,8 @@ export default {
             bottomStatus: true,
             userBottomStatus: true,
             mouseclick: false,
-            user: this.userId,
             colorPicker: {
-                hex: this.colorHex(this.usercolor, 1)
+                hex: this.colorHex(this.config.color, 1)
             },
             color: {
                 join: '#00a381',
@@ -331,7 +330,7 @@ export default {
             isPicker: false,
         }
     },
-    props: ['msg', 'userId', 'username', 'usercolor', 'roomid'],
+    props: ['msg', 'config', 'target','sendid'],
     components: {
         'Msg': MsgParsing,
         'ChromePicker': Chrome
@@ -399,8 +398,13 @@ export default {
             }
         },
         send () {
-            if (this.textarea === "") { return } else {
-                this.$parent.sendMsg(this.user, this.textarea, this.colorHex(this.colorPicker.hex, 0))
+            if (this.textarea === "") { return }
+            else {
+                if (this.target == 'public') {
+                    this.$parent.sendPublic(this.config.userid, this.textarea, this.colorHex(this.colorPicker.hex, 0))
+                }else{
+                    this.$parent.sendPrivate(this.config.userid, this.textarea, this.colorHex(this.colorPicker.hex, 0),this.sendid)
+                }
                 this.textarea = ''
                 setTimeout(() => {
                     this.textareaAuto()

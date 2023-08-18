@@ -2,19 +2,20 @@
     <div class="app dark" data-theme="dark">
 
         <div class="nav">
-            <div class="user">
-                <div class="btn" v-for="(item, key) in userList">
+            <div class="user" v-for="(item, key) in msgList">
+                <div class="btn">
                     <i class="bi bi-person-fill"></i>
                     <span>{{ config.bot[key].username }}</span>
                 </div>
-                <div class="list">
+                <div class="list" v-for="(item1, key1) in item">
+                    {{ key1 }}
                 </div>
 
             </div>
         </div>
 
-        <UserMsg v-for="(item, key ) in userList" class="card msg" :msg="msgList" :userId="config.bot[key].userid"
-            :username="config.bot[key].username" :usercolor="config.bot[key].color" :roomid="config.bot[key].roomid" />
+        <UserMsg v-for="(item, key ) in winList" class="card msg" :msg="msgList[item[0]][item[1]]"
+            :config="config.bot[item[0]]" :target="item[1]" :sendid="item[2]"/>
 
     </div>
 </template>
@@ -58,7 +59,7 @@
     .nav {
         background: #2b2d31;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         height: 95%;
         border-radius: 0px 4px 4px 0px;
         margin: 0 4px 0 0;
@@ -91,9 +92,13 @@
                     justify-content: center;
                 }
             }
+
+            .list {
+                color: #949ba4;
+            }
+
         }
 
-        .list {}
     }
 
     .card {
@@ -127,7 +132,7 @@ export default {
                 status: 'disconnect'
             },
             msgList: {},
-            userList: [],
+            winList: [],
             config: { bot: {} },
         }
     },
@@ -160,44 +165,43 @@ export default {
                 if (message.msg.hasOwnProperty('config')) {
                     message.msg.config.bot.forEach(element => {
                         this.config.bot[element.userid] = element;
-                        this.msgList[element.userid] = {}
+                        this.msgList[element.userid] = { 'public': [] }
+                        this.winList.push([element.userid, 'public'])
                     });
-
-                    // this.config = message.msg.config
-                    // console.log(1);
-                    // this.config.bot.forEach(element => {
-                    //     this.msgList[element.userid]={}
-                    // });
-
                 } else if (message.msg.hasOwnProperty('publicMessage')) {
-                    this.msgList[message.userId]['public']=[]
-                    this.msgList[message.userId]['public'].push(message.msg.publicMessage)
+                    const msg = {
+                        type: 'msg',
+                        msg: message.msg.publicMessage
+                    }
+                    this.msgList[message.userId]['public'].push(msg)
                 } else if (message.msg.hasOwnProperty('privateMessage')) {
-                    this.msgList[message.userId][message.msg.privateMessage.username]=[]
-                    this.msgList[message.userId][message.msg.privateMessage.username].push(message.msg.publicMessage)
-
+                    const msg = {
+                        type: 'msg',
+                        msg: message.msg.privateMessage
+                    }
+                    if (!this.msgList[message.userId].hasOwnProperty(message.msg.privateMessage.username)) {
+                        this.msgList[message.userId][message.msg.privateMessage.username] = []
+                        this.winList.push([message.userId, message.msg.privateMessage.username,message.msg.privateMessage.uid])
+                    }
+                    this.msgList[message.userId][message.msg.privateMessage.username].push(msg)
                 } else if (message.msg.hasOwnProperty('joinRoom')) {
-                    let msg = {
-                        user: message.userId,
+                    const msg = {
                         type: 'join',
-                        msg: message.msg.joinRoom,
+                        msg: message.msg.joinRoom
                     }
-                    this.msgList.push(msg)
+                    this.msgList[message.userId]['public'].push(msg)
                 } else if (message.msg.hasOwnProperty('switchRoom')) {
-                    let msg = {
-                        user: message.userId,
+                    const msg = {
                         type: 'switch',
-                        msg: message.msg.switchRoom,
+                        msg: message.msg.switchRoom
                     }
-                    this.msgList.push(msg)
+                    this.msgList[message.userId]['public'].push(msg)
                 } else if (message.msg.hasOwnProperty('leaveRoom')) {
-                    let msg = {
-                        user: message.userId,
+                    const msg = {
                         type: 'leave',
-                        msg: message.msg.leaveRoom,
+                        msg: message.msg.leaveRoom
                     }
-                    this.msgList.push(msg)
-
+                    this.msgList[message.userId]['public'].push(msg)
                 }
 
             };
@@ -211,11 +215,12 @@ export default {
             }, 3000);
         },
         /**
+         * 发送公屏消息
          * @param {*} userId -
          * @param {*} msg - 
          * @param {*} color 
         */
-        sendMsg (userId, msg, color) {
+        sendPublic (userId, msg, color) {
             const data = {
                 publicMsg: {
                     userId: userId,
@@ -224,7 +229,21 @@ export default {
                 }
             }
             this.ws.wws.send(JSON.stringify(data))
+        },
+        sendPrivate (userId, msg, color, target) {
+            const data = {
+                privateMsg: {
+                    target: target,
+                    userId: userId,
+                    msg: msg,
+                    color: color
+                }
+            }
+            console.log(data);
+            this.ws.wws.send(JSON.stringify(data))
+
         }
+
     },
     computed: {
     }
