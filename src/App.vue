@@ -146,6 +146,9 @@ export default {
     },
     methods: {
         connectWebSocket () {
+
+
+            
             this.ws.wws = new WebSocket('ws://127.0.0.1:3000');
 
             this.ws.wws.onopen = () => {
@@ -161,7 +164,6 @@ export default {
 
             this.ws.wws.onmessage = (event) => {
                 const message = JSON.parse(event.data);
-                console.log(message);
                 if (message.msg.hasOwnProperty('config')) {
                     message.msg.config.bot.forEach(element => {
                         this.config.bot[element.userid] = element;

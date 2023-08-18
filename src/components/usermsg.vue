@@ -8,13 +8,13 @@
 
             <div class="conten" v-for="(item, key) in message">
                 <div class="screen">
-                    <div class="reply" v-if="item.msg.replyMessage">
+                    <div class="reply" v-if="item.msg.hasOwnProperty('replyMessage')">
                         <div class="replymsg" v-for="(item1, key1) in item.msg.replyMessage">
                             <div class="name">{{ item1.username + "：" }}</div>
                             <Msg class="text" :msg="item1.message"></Msg>
                         </div>
                     </div>
-                    <div class="msgtext">
+                    <div class="msgtext" v-if="item.type=='msg'">
                         <div class="icon" :style="{ background: '#' + item.msg.color }"></div>
                         <div class="text">
                             <div class="name" @click="userAt(item.msg.username)">{{ item.msg.username }}</div>
@@ -84,7 +84,7 @@
     >.room {
         display: inline-flex;
         flex-direction: row;
-        margin: 8px 12px 8px;
+        margin: 8px 12px 2px;
         align-items: end;
         font-size: 20px;
         color: #ffffff55;
@@ -368,7 +368,6 @@ export default {
             this.textarea += ` [*${username}*] `
         },
         mouseScroll (e) {
-            console.log(this.mouseclick);
             if (this.mouseclick && this.bottomStatus) {
                 this.userBottomStatus = true
             } else if (this.mouseclick && !this.bottomStatus) {
@@ -376,8 +375,6 @@ export default {
             }
         },
         wheelScroll (e) {
-            console.log(this.color.user);
-
             if (e.deltaY < 0) {
                 this.userBottomStatus = false
             }
